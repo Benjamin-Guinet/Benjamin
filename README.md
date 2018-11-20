@@ -3,7 +3,7 @@
 
 ### Prerequisites
 
-What things you need to install:
+What softwares you need to install:
 
 * BUSCO V2 or v3 (BUSCO genes prediction): [BUSCO software](http://busco.ezlab.org/)      
 * AUGUSTUS (genes prediction): [AUGUSTUS](http://bioinf.uni-greifswald.de/augustus/downloads/) 
@@ -17,13 +17,13 @@ What things you need to install:
 
 Databases: 
 The nr database available here: (ftp://ftp.ncbi.nlm.nih.gov/blast/db/) (huge file).
-For the taxid informations, see the Peter Thorpe's instuctions here: [Instructions](https://github.com/peterthorpe5/public_scripts/tree/master/Diamond_BLAST_add_taxonomic_info)
+For the taxid informations, see Peter Thorpe's instuctions here: [Instructions](https://github.com/peterthorpe5/public_scripts/tree/master/Diamond_BLAST_add_taxonomic_info)
 
 ### Run example
 
 ###For the process to be more accessible and understandable by everyone, we will name in this example the species 1: ```0035``` and the species 2: ```0042```
 
-Let's run Busco to find conserved unique genes inside our 2 genomes: (please change informations inside these files to fit with your data)
+Let's run Busco to find conserved unique genes inside our 2 genomes: (please change informations inside these files to fit with your own data)
 ```
 bash Busco_run_sp1.sh
 bash Busco_run_sp2.sh
@@ -32,14 +32,14 @@ Outfiles:
 * run_sp1_BUSCO_v2 
 * run_sp1_BUSCO_v2
 
-With inside these folders, the Busco sequences in aa and dna formats "single_copy_busco_sequences", a short summary of Busco found and the retraining parameters for Augustus "/augustus_output/retraining_parameters".
+With inside these folders, the Busco sequences in AA and DNA formats "single_copy_busco_sequences", a short summary of Busco found and the retraining parameters for Augustus "/augustus_output/retraining_parameters" (we will use these informations later in the process). 
 
-Now that we got the Busco output files, we'll keep only completes and conserved sequences into both species.
+Now that we got the Busco output files, we will keep only completes and conserved sequences into both species.
 ```
 python3 Order_paired_seq.py  -s1 0035 -s2 0042 -d1 /Buscou.out/single_copy_busco_sequences_0035/ -d2 Buscou.out/single_copy_busco_sequences_0042/ -t1 full_table_ACG-0035_BUSCO_v2.tsv -t2 full_table_ACG-0042_BUSCO_v2.tsv
 ```
 
-Outifiles:
+Outfiles:
 * sp1.faa (amino acide format)
 * sp2.faa
 * sp1.fna (nucleotide format)
@@ -47,7 +47,7 @@ Outifiles:
 * concatened_sp1.fst (contains the aa and dna sequences of sp1 in order)
 * concatened_sp2.fst (contains the aa and dna sequences of sp2 in order)
 
-Then, you'll get 4 fasta files ready to be analyzed with the divergence.py program: 
+Then, you will get 4 fasta files ready to be analyzed with the divergence.py program: 
 ```
 python3 divergence.py -f1 0035.fna -f2 0042.fna -f3 0035.faa -f4 0042.fna -m ML -a /Users/etudiant/Downloads/muscle3.8.31_i86darwin64 -o dn_ds_Busco.out 
 ```
@@ -61,7 +61,7 @@ Outfiles:
 
 Where:
 * seq.id : Busco seq name 
-* dN : Nonsynoymous distance 
+* dN : Non-synoymous distance 
 * dS : Synonymous distance 
 * Dist_third_pos : Distance at the third codon position 
 * Dist_brute : Distance at all sites 
@@ -71,10 +71,10 @@ Where:
 * Mean_length : The smallest length 
 
 
-#Here you got the distances of Busco paired sequences with a ML method.
+#Here you got the distances of Busco paired sequences with a Maximum Likelihood (ML) method.
 
 
-Now, we will have to try to find all possible genes present in our 2 genomes with augustus: (please change information inside these files to fit with your own data)
+Now, we will have to try to find all possible genes present in our 2 genomes with Augustus: (please change information inside these files to fit with your own data)
 ```
 bash augustus_run_sp1_training_sp1.sh #outfile : run_augustus_sp1_training_sp1.out (gff format)
 bash augustus_run_sp1_training_sp2.sh #outfile : run_augustus_sp1_training_sp2.out (gff format)
@@ -82,7 +82,7 @@ bash augustus_run_sp2_training_sp2.sh #outfile : run_augustus_sp2_training_sp2.o
 bash augustus_run_sp2_training_sp1.sh #outfile : run_augustus_sp2_training_sp1.out (gff format)
 ```
 
-Now that you got the augustus ouptufiles in gff format, you'll have to get the fasta format of the CDS sequences (takes the phase into account as expected -x option and so does the -y option for protein).
+Now that you got the Augustus ouptufiles in gff format, you will have to get the fasta format of the CDS sequences (takes the phase into account as expected -x option and so does the -y option for protein).
 * -g ACG-0035-scaffold.fa  is the genome file of the sp1 for exemple.
 
 ```
@@ -97,8 +97,8 @@ Now that you got the augustus ouptufiles in gff format, you'll have to get the f
 
 Outfiles are the -x and -y parameters
 
-Now we will have to find homologous sequences into all these predicted sequences, to do so, first we will have to concatenate all sequences into one aa file. 
-#But first, please name and marque your sequences with their respective number to recognize them at the end of the process. To do so:
+Now we will have to find homologous sequences into all these predicted sequences, to do so, first we will have to concatenate all sequences into one AA file. 
+#But first, please name and tag your sequences with their respective number to recognize them at the end of the process. To do so:
 #Add the specie number after all ".t1" patterns, please replace your own number in the code below.
 
 ```
@@ -122,7 +122,7 @@ Outfiles:
 * concatenate_0035_0042.faa 
 * concatenate_0035_0042.fna
 
-#Then, we will perform a Diamond "all against all" and a SiLix run on these amino acide sequences to find homologous sequences and to only keep the best ones within each cluster :
+#Then, we will perform a Diamond "all against all" and a SiLix run on these amino acide sequences to find homologous sequences and then, to only keep the best ones within each cluster :
 
 #Let's make a Blast database of or sequences:
 
@@ -160,7 +160,7 @@ FASTA=concatenate_0035_0042.faa
 $SILIX  $FASTA $BLAST -f cluster_ -n > cluster_Augustus_0035_0042.fnodes
 ```
 
-Now we only want to get the 2 paired sequences into cluster with the best pident of the mean HSP: 
+Now we only want to get the 2 paired sequences into cluster with the best percentage of identity (pident) of the mean High-scoring Segment Pair (HSP): 
 ```
 python3 cluster_silix_merging.py -b matches_Augustus_0035_0042.m8 -c cluster_Augustus_0035_0042.fnodes -d matches_Augustus_0035_0042.net -f1 concatenate_0035_0042.faa -f2 concatenate_0035_0042.fna 
 ```
@@ -181,7 +181,7 @@ Outfile:
 | seq1.id | seq2_id | dN | dS | Dist_third_pos | Dist_brute | Length_seq_1 |Length_seq2 | GC_content_seq1 | GC_content_seq2 | GC | Mean_length |
 | ------- |:-------:|:--:|:-:| :-------------:| :---------:| :-----------:| :---------:| :--------------:| :--------------:| :-:| -----------:|
 
-Where seqn_id is the name of the sequence n
+Where seqn_id is the name of the sequence n.
 
 We will only keep within all these paired sequences the ones wich have passed through the dS and the Cov thresholds:
 ```
@@ -190,7 +190,7 @@ python3 gff_cov.py -d1 dn_ds_Busco.out -d2 dn_ds_Augustus.out  -s1 0035 -s2 0042
 
 Outfiles:
 * candidates_genes_pvalue_cov_0035_0042.tab (Final output with candidates genes predicted by Augustus after passing through the filter p-value and coverage)
-* Augustus_clustering.tab (Outut table of Augustus predicted genes after passing through the clustering filter (max pident within each cluster)
+* Augustus_clustering.tab (Output table of Augustus predicted genes after passing through the clustering filter (max pident within each cluster)
 * candidates_genes_pvalue_0035_0042.tab (Final output with candidates genes predicted by Augustus after passing through the filter p-value:)
 
 Final fasta output with candidates genes predicted by Augustus after passing through the filter dS (this file will be usefull for the blast against the nr db step).
@@ -212,7 +212,7 @@ Outfiles:
 * matches_sp1_candidates.m8 (blast output table of the sp1)
 * matches_sp2_candidates.m8 (blast output table of the sp2)
 
-Finnaly to be more readable, we can get taxid informations about these HGT candidates genes.(cf Peter Thorpe program).
+Finnaly to be more readable, we can get taxid informations about these HGT candidates genes.(cf Peter Thorpe program above).
 ```
 bash tax_name_sp1.sh
 bash tax_name_sp2.sh
@@ -228,7 +228,7 @@ You can use this script to also include sequence with no blast hit and get a fin
 ```
 python3 get_dataframe_candidates.py -c candidates_genes_pvalue_0035_0042.tab -b1 outfile_0035.tab_top_blast_hits.csv -b2 outfile_0042.tab_top_blast_hits.csv -s1 0035 -s2 0042
 ```
-Outpud files: 
+Output files: 
 * All_candidates_cov_all_inf.tab (Table with all information with all candidats passed through the dS and covergae threshold).
 * Summarize_All_candidates_with_all_inf.tab (Table with more important information with all candidats passed through the dS threshold).
 * All_candidates_with_all_inf.tab (Table with all information with all candidats passed through the dS threshold).
@@ -239,18 +239,19 @@ Outpud files:
 
 
 
-Now that you got all the candidate genes, you'll have to do multiples thing to check if your candidate is as real HGT and integrated.
+Now that you got all the candidate genes, you will have to do multiples thing to check if your candidates are real HGT and integrated into the other specie's genome. 
+
 ## Here are the steps:
 
-1 - Construct a phylogenetic tree and see if there is an incongruence:
-1.1 - Take your target sequence in amino acide format and make a research of homologous sequences against the nr databe.
+1 - Construct a phylogenetic tree and see if there is an incongruence (It does mean that you need a resolved phylogenetic tree of your species built with ubiquitous genes (ex: Busco genes) for instance):
+1.1 - In order to creat a phylogeny of your gene, you will need to have several sequences coming from several species closely related to your two species. To do so take your target sequence in amino acide format and make a research of homologous sequences against the nr databe and pick up around 15-20 sequences for both species.
 1.2 - Align all these sequences with Seaview (Gouy M et al.,2010 available here : http://doua.prabi.fr/software/seaview) for exemple, align all these sequences and use Gblocks program to select only blocks of evolutionarily conserved sites.
 1.3 - Construct your tree with a Maximum likelihood method (or a baysian method, not availabe on seaview but you can use MrBaye) and add boostrap analysis (or a LRT if you want to be faster).
-1.4 - If their is an incongruence and a good bootstrap support, then your sequence is probably an HGT since the two species are diverging from a long time. 
+1.4 - If there is an incongruence and a good bootstrap support, then your sequence is probably an HGT since the two species are diverging from a long time. 
 
 2 - Check if this sequence is a contamination, not integrated one or if it is incorporated into the host genome:
 2.1- If this sequence is found in a scaffold where you have found other predicted genes or even BUSCO ones, it is a good clue for an integrated HGT sequence.
-2.2- Check if the 2 sequences have some differences at the nucleotid level, if they does not and are 100% identical, it can be a contamination.
+2.2- Check if the 2 sequences have some differences at the nucleotid level, if they do not and are 100% identical, it can be a contamination.
 
 
 ## Contributors 
